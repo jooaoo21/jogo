@@ -1,0 +1,12 @@
+O JOGO DO DESEJO - versão app (PWA)
+
+Para instalar no telemóvel, esta pasta tem de estar num endereço https:
+  - Netlify Drop (app.netlify.com/drop): arrastar a pasta
+  - ou GitHub Pages / Cloudflare Pages / Vercel
+
+No telemóvel:
+  - Android (Chrome): botão 'Instalar como app' no menu do jogo, ou menu ⋮ > Instalar aplicação
+  - iPhone (Safari): Partilhar > Adicionar ao ecrã principal
+
+Ao atualizar o jogo, mudar a versão em sw.js (CACHE = 'jogo-desejo-v2', v3...)
+para os telemóveis receberem a novidade.
