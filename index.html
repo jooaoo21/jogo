@@ -668,7 +668,7 @@
         <div class="names-content">
             <div style="font-size: 44px; margin-bottom: 6px;" aria-hidden="true">🔥</div>
             <h3 id="welcome-title" style="color: #e84393; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px;">Bem-vindos ao Jogo do Desejo</h3>
-            <p style="color: var(--text-gray); font-size: 13px; margin-bottom: 16px; line-height: 1.4;">Antes de começar: quem vai jogar? Os nomes aparecem nas cartas, nas recompensas e nos desafios.</p>
+            <p style="color: var(--text-gray); font-size: 13px; margin-bottom: 16px; line-height: 1.4;">Antes de começar: quem vai jogar? Os nomes aparecem nas cartas, nas recompensas e nos desafios. Só perguntamos esta vez.</p>
             <div style="text-align: left; color: var(--text-gray); font-size: 12px; font-weight:bold;">JOGADOR 1:</div>
             <input type="text" id="welcome-p1" class="name-input" placeholder="Ex: João" maxlength="15" autocomplete="off" autocapitalize="words" enterkeyhint="next">
             <div style="text-align: left; color: var(--text-gray); font-size: 12px; font-weight:bold;">JOGADOR 2:</div>
@@ -750,6 +750,7 @@
             <button type="button" class="main-menu-btn btn-sexy" onclick="openSection('sexy')"><span class="emoji">🔥</span><span class="menu-btn-text">Sexy (+18)<small>Termómetro, roletas, fantasias e jogo do álcool.</small></span></button>
             <div class="home-mini-row">
                 <button type="button" class="back-btn" onclick="openStats()">📊 Estatísticas</button>
+                <button type="button" class="back-btn" onclick="editNames()">✏️ Nomes</button>
             </div>
             <button type="button" class="back-btn" onclick="resetAllProgress()" style="margin-top:6px; font-size:11px;">🗑️ Apagar progresso guardado</button>
             
@@ -831,7 +832,7 @@
             <h3 style="color: #e84393; margin-bottom: 10px; text-transform: uppercase;">Teste de Sintonia</h3>
             <p id="sintonia-players-text" style="color: var(--text-gray); font-size: 13px; margin-bottom: 15px; line-height: 1.4;"></p>
             <button type="button" class="back-btn" id="continue-sintonia-btn" style="display:none; width:100%; margin-bottom:10px; padding:10px;" onclick="confirmNames(true)"></button>
-            <button class="next-btn" style="width: 100%; background: #e84393; border-color:#e84393;" onclick="confirmNames()">Iniciar Duelo ➔</button>
+            <button class="next-btn" style="width: 100%; background: #e84393; border-color:#e84393;" onclick="confirmNames()">Começar de novo ➔</button>
             <button type="button" class="back-btn" style="width:100%; margin-top:10px; padding:10px;" onclick="closeNamesModal()">Cancelar</button>
         </div>
     </div>
@@ -1209,6 +1210,13 @@
         function showWelcomeIfNeeded() {
             const n = getNames();
             if (n.n1 && n.n2) return;
+            if (store.get('welcomeSkipped', false)) return;
+            editNames();
+        }
+
+        // Abre o ecrã de nomes (primeira vez, ou quando o utilizador carrega em "✏️ Nomes")
+        function editNames() {
+            const n = getNames();
             document.getElementById('welcome-error').textContent = '';
             document.getElementById('welcome-p1').value = n.n1;
             document.getElementById('welcome-p2').value = n.n2;
@@ -1231,12 +1239,14 @@
                 return;
             }
             setPlayerNames(a, b);
+            store.remove('welcomeSkipped');
             document.getElementById('welcome-modal').classList.remove('active');
             updateHomeStrip();
             vibrate(60);
         }
 
         function skipWelcome() {
+            store.set('welcomeSkipped', true);
             document.getElementById('welcome-modal').classList.remove('active');
         }
 
@@ -2853,7 +2863,7 @@ const supremePrizes = [
 
         function openNamesModal(mode) {
             pendingSintoniaMode = mode;
-            document.getElementById('sintonia-players-text').textContent = '👥 ' + displayName(1) + ' vs ' + displayName(2);
+            document.getElementById('sintonia-players-text').textContent = 'Já têm um jogo guardado. Querem continuar ou começar de novo?';
 
             const st = store.get('sintoniaState', null);
             const contBtn = document.getElementById('continue-sintonia-btn');
@@ -2861,7 +2871,8 @@ const supremePrizes = [
                 contBtn.textContent = `▶ Continuar jogo guardado: ${displayName(1)} ${st.p1Score} – ${st.p2Score} ${displayName(2)}`;
                 contBtn.style.display = 'block';
             } else {
-                contBtn.style.display = 'none';
+                confirmNames();   // sem jogo guardado: arranca logo, os nomes já são conhecidos
+                return;
             }
 
             document.getElementById('names-modal').classList.add('active');

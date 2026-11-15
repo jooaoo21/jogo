@@ -1,6 +1,6 @@
 // Service worker: guarda tudo em cache para o jogo funcionar offline.
 // Ao atualizar o jogo, muda a versão abaixo para os telemóveis receberem a novidade.
-const CACHE = 'jogo-desejo-v8';
+const CACHE = 'jogo-desejo-v10';
 const FILES = [
   './', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png',
